@@ -40,8 +40,92 @@ export const TokenManager = {
     localStorage.removeItem(REFRESH_TOKEN_KEY)
   },
 
+  /**
+   * 解析 JWT Token 的 payload 部分
+   * @param {string} token - JWT token
+   * @returns {object|null} 解析后的 payload 对象，解析失败返回 null
+   */
+  parseToken(token) {
+    if (!token) return null
+
+    try {
+      // JWT 格式: header.payload.signature
+      const parts = token.split('.')
+      if (parts.length !== 3) return null
+
+      // 解析 payload (base64url -> base64 -> json)
+      const base64Url = parts[1]
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
+      const payload = JSON.parse(decodeURIComponent(atob(base64)))
+
+      return payload
+    } catch (e) {
+      console.warn('Token 解析失败:', e.message)
+      return null
+    }
+  },
+
+  /**
+   * 检查 token 是否有效（格式正确且未过期）
+   * @param {string} token - JWT token
+   * @returns {boolean} token 是否有效
+   */
+  isTokenValid(token) {
+    const payload = this.parseToken(token)
+    if (!payload) return false
+
+    // 检查过期时间 (exp 是 Unix 时间戳，单位秒)
+    if (payload.exp) {
+      const now = Math.floor(Date.now() / 1000)
+      // 预留 10 秒缓冲时间，避免临界情况
+      if (payload.exp < now + 10) {
+        return false
+      }
+    }
+
+    return true
+  },
+
+  /**
+   * 判断用户是否已登录（token 存在且有效）
+   * @returns {boolean} 是否已登录
+   */
   isLoggedIn() {
-    return !!this.getToken()
+    const token = this.getToken()
+    if (!token) return false
+
+    const isValid = this.isTokenValid(token)
+
+    // 如果 token 无效，自动清除
+    if (!isValid) {
+      this.clearTokens()
+      return false
+    }
+
+    return true
+  },
+
+  /**
+   * 获取 token 中的用户信息
+   * @returns {object|null} 用户信息
+   */
+  getTokenPayload() {
+    const token = this.getToken()
+    return this.parseToken(token)
+  },
+
+  /**
+   * 获取 token 剩余有效时间（秒）
+   * @returns {number} 剩余秒数，-1 表示 token 无效或已过期
+   */
+  getTokenRemainingTime() {
+    const payload = this.getTokenPayload()
+    if (!payload || !payload.exp) return -1
+
+    const now = Math.floor(Date.now() / 1000)
+    const remaining = payload.exp - now
+
+    return remaining > 0 ? remaining : -1
   },
 }
 

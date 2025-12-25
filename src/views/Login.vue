@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 
@@ -7,15 +7,47 @@ const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
 
+// 模式切换：登录 / 注册
+const isRegisterMode = ref(false)
+
 const form = reactive({
   username: '',
   password: '',
+  displayName: '',
   remember: false,
 })
 
 const isLoading = ref(false)
 const showPassword = ref(false)
 const errorMessage = ref('')
+const successMessage = ref('')
+
+// 动态标题
+const pageTitle = computed(() => (isRegisterMode.value ? '创建账户' : '欢迎回来'))
+const pageSubtitle = computed(() =>
+  isRegisterMode.value ? '注册以开始使用服务' : '登录以继续访问您的账户',
+)
+const submitButtonText = computed(() => (isRegisterMode.value ? '注 册' : '登 录'))
+
+// 切换模式
+function toggleMode() {
+  isRegisterMode.value = !isRegisterMode.value
+  errorMessage.value = ''
+  successMessage.value = ''
+  // 清空表单
+  form.username = ''
+  form.password = ''
+  form.displayName = ''
+}
+
+// 处理表单提交
+async function handleSubmit() {
+  if (isRegisterMode.value) {
+    await handleRegister()
+  } else {
+    await handleLogin()
+  }
+}
 
 async function handleLogin() {
   if (!form.username || !form.password) {
@@ -37,6 +69,39 @@ async function handleLogin() {
     router.push(redirect)
   } catch (error) {
     errorMessage.value = error.message || '登录失败，请重试'
+  } finally {
+    isLoading.value = false
+  }
+}
+
+async function handleRegister() {
+  if (!form.username || !form.password) {
+    errorMessage.value = '请输入用户名和密码'
+    return
+  }
+
+  if (form.password.length < 6) {
+    errorMessage.value = '密码长度至少为6位'
+    return
+  }
+
+  isLoading.value = true
+  errorMessage.value = ''
+
+  try {
+    await userStore.register({
+      username: form.username,
+      password: form.password,
+      displayName: form.displayName || undefined,
+    })
+
+    // 注册成功，显示成功消息并切换到登录模式
+    successMessage.value = '注册成功！请登录'
+    isRegisterMode.value = false
+    form.password = ''
+    form.displayName = ''
+  } catch (error) {
+    errorMessage.value = error.message || '注册失败，请重试'
   } finally {
     isLoading.value = false
   }
@@ -78,12 +143,28 @@ async function handleLogin() {
             />
           </svg>
         </div>
-        <h1 class="title">欢迎回来</h1>
-        <p class="subtitle">登录以继续访问您的账户</p>
+        <h1 class="title">{{ pageTitle }}</h1>
+        <p class="subtitle">{{ pageSubtitle }}</p>
       </div>
 
       <!-- 表单区域 -->
-      <form class="login-form" @submit.prevent="handleLogin">
+      <form class="login-form" @submit.prevent="handleSubmit">
+        <!-- 成功提示 -->
+        <Transition name="fade">
+          <div v-if="successMessage" class="success-message">
+            <svg class="success-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="10" stroke-width="2" />
+              <path
+                d="M9 12l2 2 4-4"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            {{ successMessage }}
+          </div>
+        </Transition>
+
         <!-- 错误提示 -->
         <Transition name="shake">
           <div v-if="errorMessage" class="error-message">
@@ -148,8 +229,30 @@ async function handleLogin() {
           </div>
         </div>
 
-        <!-- 记住我 & 忘记密码 -->
-        <div class="form-options">
+        <!-- 昵称输入 (仅注册模式) -->
+        <Transition name="slide-fade">
+          <div v-if="isRegisterMode" class="input-group">
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"
+                  stroke-width="2"
+                />
+                <path d="M12 6v6l4 2" stroke-width="2" stroke-linecap="round" />
+              </svg>
+              <input
+                v-model="form.displayName"
+                type="text"
+                class="input-field"
+                placeholder="昵称（可选）"
+                autocomplete="nickname"
+              />
+            </div>
+          </div>
+        </Transition>
+
+        <!-- 记住我 & 忘记密码 (仅登录模式) -->
+        <div v-if="!isRegisterMode" class="form-options">
           <label class="remember-me">
             <input v-model="form.remember" type="checkbox" class="checkbox" />
             <span class="checkmark"></span>
@@ -158,9 +261,9 @@ async function handleLogin() {
           <a href="#" class="forgot-password">忘记密码？</a>
         </div>
 
-        <!-- 登录按钮 -->
+        <!-- 提交按钮 -->
         <button type="submit" class="login-button" :disabled="isLoading">
-          <span v-if="!isLoading" class="button-text">登 录</span>
+          <span v-if="!isLoading" class="button-text">{{ submitButtonText }}</span>
           <span v-else class="loading-spinner">
             <svg class="spinner" viewBox="0 0 24 24">
               <circle cx="12" cy="12" r="10" stroke-width="3" fill="none" />
@@ -169,53 +272,61 @@ async function handleLogin() {
           <div class="button-glow"></div>
         </button>
 
-        <!-- 分割线 -->
-        <div class="divider">
-          <span>或使用以下方式登录</span>
-        </div>
+        <!-- 分割线 (仅登录模式) -->
+        <template v-if="!isRegisterMode">
+          <div class="divider">
+            <span>或使用以下方式登录</span>
+          </div>
 
-        <!-- 社交登录 -->
-        <div class="social-login">
-          <button type="button" class="social-button wechat">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.32.32 0 0 0 .167-.054l1.903-1.114a.86.86 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178A1.17 1.17 0 0 1 4.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178 1.17 1.17 0 0 1-1.162-1.178c0-.651.52-1.18 1.162-1.18zm5.34 2.867c-1.797-.052-3.746.512-5.28 1.786-1.72 1.428-2.687 3.72-1.78 6.22.942 2.453 3.666 4.229 6.884 4.229.826 0 1.622-.12 2.361-.336a.72.72 0 0 1 .598.082l1.584.926a.27.27 0 0 0 .14.047c.134 0 .24-.111.24-.247 0-.06-.023-.12-.038-.177l-.327-1.233a.49.49 0 0 1 .177-.554C23.162 18.381 24 16.77 24 15.017c0-3.375-3.042-6.112-7.062-6.159zm-2.001 2.299c.535 0 .969.44.969.982a.98.98 0 0 1-.969.983.98.98 0 0 1-.969-.983c0-.542.434-.982.97-.982zm4.801 0c.535 0 .969.44.969.982a.98.98 0 0 1-.969.983.98.98 0 0 1-.969-.983c0-.542.434-.982.969-.982z"
-              />
-            </svg>
-          </button>
-          <button type="button" class="social-button github">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"
-              />
-            </svg>
-          </button>
-          <button type="button" class="social-button google">
-            <svg viewBox="0 0 24 24">
-              <path
-                fill="#4285F4"
-                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-              />
-              <path
-                fill="#34A853"
-                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-              />
-              <path
-                fill="#FBBC05"
-                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-              />
-              <path
-                fill="#EA4335"
-                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-              />
-            </svg>
-          </button>
-        </div>
+          <!-- 社交登录 -->
+          <div class="social-login">
+            <button type="button" class="social-button wechat">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.32.32 0 0 0 .167-.054l1.903-1.114a.86.86 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178A1.17 1.17 0 0 1 4.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178 1.17 1.17 0 0 1-1.162-1.178c0-.651.52-1.18 1.162-1.18zm5.34 2.867c-1.797-.052-3.746.512-5.28 1.786-1.72 1.428-2.687 3.72-1.78 6.22.942 2.453 3.666 4.229 6.884 4.229.826 0 1.622-.12 2.361-.336a.72.72 0 0 1 .598.082l1.584.926a.27.27 0 0 0 .14.047c.134 0 .24-.111.24-.247 0-.06-.023-.12-.038-.177l-.327-1.233a.49.49 0 0 1 .177-.554C23.162 18.381 24 16.77 24 15.017c0-3.375-3.042-6.112-7.062-6.159zm-2.001 2.299c.535 0 .969.44.969.982a.98.98 0 0 1-.969.983.98.98 0 0 1-.969-.983c0-.542.434-.982.97-.982zm4.801 0c.535 0 .969.44.969.982a.98.98 0 0 1-.969.983.98.98 0 0 1-.969-.983c0-.542.434-.982.969-.982z"
+                />
+              </svg>
+            </button>
+            <button type="button" class="social-button github">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"
+                />
+              </svg>
+            </button>
+            <button type="button" class="social-button google">
+              <svg viewBox="0 0 24 24">
+                <path
+                  fill="#4285F4"
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                />
+                <path
+                  fill="#EA4335"
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                />
+              </svg>
+            </button>
+          </div>
+        </template>
 
-        <!-- 注册链接 -->
+        <!-- 切换链接 -->
         <p class="register-link">
-          还没有账户？
-          <a href="#">立即注册</a>
+          <template v-if="!isRegisterMode">
+            还没有账户？
+            <a href="#" @click.prevent="toggleMode">立即注册</a>
+          </template>
+          <template v-else>
+            已有账户？
+            <a href="#" @click.prevent="toggleMode">立即登录</a>
+          </template>
         </p>
       </form>
     </div>
@@ -533,8 +644,56 @@ async function handleLogin() {
   flex-shrink: 0;
 }
 
+/* 成功提示 */
+.success-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 12px;
+  color: #86efac;
+  font-size: 14px;
+}
+
+.success-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 .shake-enter-active {
   animation: shake 0.5s ease-out;
+}
+
+/* 滑动淡入动画 */
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.2s ease-in;
+}
+
+.slide-fade-enter-from {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.slide-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
 }
 
 @keyframes shake {

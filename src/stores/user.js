@@ -56,6 +56,24 @@ export const useUserStore = defineStore('user', () => {
   }
 
   /**
+   * 用户注册
+   * @param {object} data - 注册数据 { username, password, displayName? }
+   */
+  async function register(data) {
+    loading.value = true
+    try {
+      const response = await request.post('/auth/register', {
+        username: data.username,
+        password: data.password,
+        displayName: data.displayName,
+      })
+      return response
+    } finally {
+      loading.value = false
+    }
+  }
+
+  /**
    * 获取当前用户信息
    */
   async function fetchUserInfo() {
@@ -93,11 +111,31 @@ export const useUserStore = defineStore('user', () => {
 
   /**
    * 初始化用户状态（应用启动时调用）
+   * 1. 先从 JWT payload 提取基础信息（快速，避免白屏等待）
+   * 2. 再从 API 获取完整用户信息（异步更新）
    */
   async function initUserState() {
-    if (TokenManager.isLoggedIn()) {
-      await fetchUserInfo()
+    if (!TokenManager.isLoggedIn()) {
+      userInfo.value = null
+      return
     }
+
+    // 从 JWT payload 中提取基础信息（快速恢复）
+    const tokenPayload = TokenManager.getTokenPayload()
+    console.log(tokenPayload, 'tokenPayload')
+    if (tokenPayload) {
+      // 根据你的 JWT payload 结构调整字段名
+      userInfo.value = {
+        id: tokenPayload.sub || tokenPayload.userId || tokenPayload.id,
+        username: tokenPayload.username,
+        displayName: tokenPayload.displayName || tokenPayload.name,
+        // 标记为临时数据
+        _fromToken: true,
+      }
+    }
+
+    // 异步获取完整的用户信息
+    await fetchUserInfo()
   }
 
   return {
@@ -111,6 +149,7 @@ export const useUserStore = defineStore('user', () => {
     // Actions
     login,
     logout,
+    register,
     fetchUserInfo,
     updateUserInfo,
     initUserState,
