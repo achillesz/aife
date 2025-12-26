@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <h2>设置</h2>
-    <div>
+  <div class="pl-[50px] pt-[30px]">
+    <h2 class="text-[30px]">设置</h2>
+    <div class="mt-[20px]">
       <span>深色</span>
       <a-switch
         type="round"

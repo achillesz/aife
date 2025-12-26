@@ -5,8 +5,10 @@ import App from './App.vue'
 import router from './router'
 
 // 全局样式
-import '@/styles/tailwind.css' // Tailwind CSS v4
-import '@/styles/index.scss' // 自定义样式
+// 顺序: SCSS(含 reset) → Tailwind
+// Tailwind 在后加载，工具类能覆盖 reset
+import '@/styles/index.scss'
+import '@/styles/tailwind.css'
 
 const app = createApp(App)
 
