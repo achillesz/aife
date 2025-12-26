@@ -1,8 +1,9 @@
 <template>
   <div class="pl-[50px] pt-[30px]">
     <h2 class="text-[30px]">设置</h2>
-    <div class="mt-[20px]">
-      <span>深色</span>
+    <div class="mt-[20px] line-setter flex items-center gap-[10px]">
+      <span class="title
+      text-[14px]">深色</span>
       <a-switch
         type="round"
         v-model="isDark"
@@ -30,3 +31,11 @@ watch(
   { immediate: true } // 立即执行一次，确保初始状态正确
 )
 </script>
+
+<style scoped lang="scss">
+.line-setter {
+  .title {
+    width: 100px;
+  }
+}
+</style>
