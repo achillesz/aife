@@ -1,0 +1,156 @@
+// ==================== CSS Reset / Normalize ====================
+// 基于现代浏览器的 CSS 重置，确保跨浏览器一致性
+
+// 使用 border-box 盒模型
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+// 移除默认 margin
+* {
+  margin: 0;
+}
+
+// 平滑字体渲染
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+// 基础 body 设置
+body {
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+
+// 图片等替换元素的默认行为
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+// 表单元素继承字体
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+// 避免文本溢出
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+// 链接样式重置
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+// 列表样式重置
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+}
+
+// 表格边框合并
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+// 按钮重置
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+// 输入框重置
+input,
+textarea {
+  outline: none;
+  border: none;
+  background: none;
+
+  &::placeholder {
+    color: inherit;
+    opacity: 0.5;
+  }
+}
+
+// 隐藏默认的数字输入框箭头
+input[type='number'] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+// 隐藏搜索框的清除按钮
+input[type='search'] {
+  &::-webkit-search-decoration,
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-results-button,
+  &::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+  }
+}
+
+// 滚动条样式 (Webkit)
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.25);
+  }
+}
+
+// Firefox 滚动条
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+}
+
+// 选中文本样式
+::selection {
+  background: rgba(102, 126, 234, 0.3);
+  color: inherit;
+}

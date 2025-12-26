@@ -1,0 +1,269 @@
+// ==================== 全局样式入口 ====================
+// 这是样式的主入口文件，在 main.js 中引入
+
+// 引入变量 (需要先引入，供其他文件使用)
+@use './variables' as *;
+
+// CSS Reset
+@use './reset';
+
+// Arco Design 主题覆盖
+@use './arco-override';
+
+// ==================== 全局基础样式 ====================
+html,
+body {
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-page);
+  line-height: $line-height-base;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+}
+
+// ==================== 全局工具类 ====================
+
+// 文本对齐
+.text-left {
+  text-align: left;
+}
+.text-center {
+  text-align: center;
+}
+.text-right {
+  text-align: right;
+}
+
+// 文本颜色
+.text-primary {
+  color: $color-primary;
+}
+.text-secondary {
+  color: $color-text-secondary;
+}
+.text-success {
+  color: $color-success;
+}
+.text-warning {
+  color: $color-warning;
+}
+.text-danger {
+  color: $color-danger;
+}
+
+// 文本截断
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Flex 工具
+.flex {
+  display: flex;
+}
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.flex-1 {
+  flex: 1;
+}
+
+// 间距工具 (margin)
+.mt-0 {
+  margin-top: 0;
+}
+.mt-1 {
+  margin-top: $spacing-xs;
+}
+.mt-2 {
+  margin-top: $spacing-sm;
+}
+.mt-3 {
+  margin-top: $spacing-md;
+}
+.mt-4 {
+  margin-top: $spacing-base;
+}
+
+.mb-0 {
+  margin-bottom: 0;
+}
+.mb-1 {
+  margin-bottom: $spacing-xs;
+}
+.mb-2 {
+  margin-bottom: $spacing-sm;
+}
+.mb-3 {
+  margin-bottom: $spacing-md;
+}
+.mb-4 {
+  margin-bottom: $spacing-base;
+}
+
+.ml-0 {
+  margin-left: 0;
+}
+.ml-1 {
+  margin-left: $spacing-xs;
+}
+.ml-2 {
+  margin-left: $spacing-sm;
+}
+.ml-3 {
+  margin-left: $spacing-md;
+}
+.ml-4 {
+  margin-left: $spacing-base;
+}
+
+.mr-0 {
+  margin-right: 0;
+}
+.mr-1 {
+  margin-right: $spacing-xs;
+}
+.mr-2 {
+  margin-right: $spacing-sm;
+}
+.mr-3 {
+  margin-right: $spacing-md;
+}
+.mr-4 {
+  margin-right: $spacing-base;
+}
+
+// 间距工具 (padding)
+.p-0 {
+  padding: 0;
+}
+.p-1 {
+  padding: $spacing-xs;
+}
+.p-2 {
+  padding: $spacing-sm;
+}
+.p-3 {
+  padding: $spacing-md;
+}
+.p-4 {
+  padding: $spacing-base;
+}
+
+// 宽度高度
+.w-full {
+  width: 100%;
+}
+.h-full {
+  height: 100%;
+}
+
+// 显示隐藏
+.hidden {
+  display: none !important;
+}
+.visible {
+  visibility: visible;
+}
+.invisible {
+  visibility: hidden;
+}
+
+// 鼠标
+.cursor-pointer {
+  cursor: pointer;
+}
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+// ==================== 过渡动画类 ====================
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity $transition-base;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all $transition-base;
+}
+
+.slide-up-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: all $transition-base;
+}
+
+.slide-right-enter-from {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+.slide-right-leave-to {
+  opacity: 0;
+  transform: translateX(10px);
+}
+
+// ==================== 页面容器 ====================
+.page-container {
+  padding: $spacing-xl;
+  min-height: 100%;
+}
+
+.page-header {
+  margin-bottom: $spacing-xl;
+
+  .page-title {
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+    margin: 0;
+  }
+
+  .page-description {
+    font-size: $font-size-base;
+    color: $color-text-secondary;
+    margin-top: $spacing-sm;
+  }
+}
+
+// ==================== 卡片容器 ====================
+.card {
+  background: var(--color-bg-card);
+  border-radius: $radius-md;
+  padding: $spacing-xl;
+  box-shadow: 0 1px 3px var(--color-shadow);
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}

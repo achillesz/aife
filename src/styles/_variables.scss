@@ -1,0 +1,204 @@
+// ==================== 设计令牌 (Design Tokens) ====================
+// 这里定义项目的所有设计变量，包括颜色、间距、字体等
+
+// ==================== CSS 自定义属性 (支持主题切换) ====================
+:root {
+  // 语义化颜色 - 亮色主题
+  --color-text-primary: #1f2937;
+  --color-text-secondary: #6b7280;
+  --color-text-placeholder: #9ca3af;
+  --color-text-disabled: #d1d5db;
+  --color-bg-page: #f5f7fa;
+  --color-bg-card: #ffffff;
+  --color-bg-hover: #f9fafb;
+  --color-bg-active: #f3f4f6;
+  --color-border: #e5e7eb;
+  --color-border-light: #f3f4f6;
+  --color-border-dark: #d1d5db;
+  --color-shadow: rgba(0, 0, 0, 0.1);
+
+  // 侧边栏 - 亮色主题
+  --sider-bg: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  --sider-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
+  --sider-border-color: rgba(0, 0, 0, 0.06);
+  --sider-text-color: #475569;
+  --sider-text-color-hover: #1e293b;
+  --sider-item-hover-bg: rgba(0, 0, 0, 0.04);
+  --sider-logo-text-color: #1e293b;
+}
+
+// 暗色主题
+body[arco-theme='dark'] {
+  --color-text-primary: rgba(255, 255, 255, 0.9);
+  --color-text-secondary: rgba(255, 255, 255, 0.7);
+  --color-text-placeholder: rgba(255, 255, 255, 0.5);
+  --color-text-disabled: rgba(255, 255, 255, 0.3);
+  --color-bg-page: #17171a;
+  --color-bg-card: #232324;
+  --color-bg-hover: #2a2a2b;
+  --color-bg-active: #313132;
+  --color-border: #3f3f3f;
+  --color-border-light: #2d2d2d;
+  --color-border-dark: #4a4a4a;
+  --color-shadow: rgba(0, 0, 0, 0.3);
+
+  // 侧边栏 - 暗色主题
+  --sider-bg: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+  --sider-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+  --sider-border-color: rgba(255, 255, 255, 0.1);
+  --sider-text-color: rgba(255, 255, 255, 0.7);
+  --sider-text-color-hover: #ffffff;
+  --sider-item-hover-bg: rgba(255, 255, 255, 0.1);
+  --sider-logo-text-color: #ffffff;
+}
+
+// ==================== 颜色系统 ====================
+// 主色调
+$color-primary: #667eea;
+$color-primary-light: #8b9ff5;
+$color-primary-dark: #4a5fc4;
+$color-primary-bg: rgba(102, 126, 234, 0.1);
+
+// 辅助色
+$color-secondary: #764ba2;
+$color-secondary-light: #9b6fc5;
+$color-secondary-dark: #5a3880;
+
+// 功能色
+$color-success: #22c55e;
+$color-success-light: #86efac;
+$color-success-bg: rgba(34, 197, 94, 0.1);
+
+$color-warning: #f59e0b;
+$color-warning-light: #fcd34d;
+$color-warning-bg: rgba(245, 158, 11, 0.1);
+
+$color-danger: #ef4444;
+$color-danger-light: #fca5a5;
+$color-danger-bg: rgba(239, 68, 68, 0.1);
+
+$color-info: #3b82f6;
+$color-info-light: #93c5fd;
+$color-info-bg: rgba(59, 130, 246, 0.1);
+
+// 中性色 (用于文本、边框、背景等)
+// 注意：这些 SCSS 变量仅作为备用，实际使用应该用 CSS 变量
+$color-text-primary: var(--color-text-primary);
+$color-text-secondary: var(--color-text-secondary);
+$color-text-placeholder: var(--color-text-placeholder);
+$color-text-disabled: var(--color-text-disabled);
+$color-text-white: #ffffff;
+
+$color-border: var(--color-border);
+$color-border-light: var(--color-border-light);
+$color-border-dark: var(--color-border-dark);
+
+$color-bg-page: var(--color-bg-page);
+$color-bg-card: var(--color-bg-card);
+$color-bg-hover: var(--color-bg-hover);
+$color-bg-active: var(--color-bg-active);
+$color-bg-mask: rgba(0, 0, 0, 0.45);
+
+// 暗色主题 (侧边栏等)
+$color-dark-bg: #1a1a2e;
+$color-dark-bg-light: #16213e;
+$color-dark-text: rgba(255, 255, 255, 0.85);
+$color-dark-text-secondary: rgba(255, 255, 255, 0.65);
+$color-dark-border: rgba(255, 255, 255, 0.1);
+
+// ==================== 渐变色 ====================
+$gradient-primary: linear-gradient(135deg, $color-primary 0%, $color-secondary 100%);
+$gradient-dark: linear-gradient(180deg, $color-dark-bg 0%, $color-dark-bg-light 100%);
+
+// ==================== 间距系统 ====================
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-base: 16px;
+$spacing-lg: 20px;
+$spacing-xl: 24px;
+$spacing-2xl: 32px;
+$spacing-3xl: 40px;
+$spacing-4xl: 48px;
+
+// ==================== 圆角 ====================
+$radius-xs: 4px;
+$radius-sm: 6px;
+$radius-base: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+$radius-xl: 20px;
+$radius-2xl: 24px;
+$radius-full: 9999px;
+
+// ==================== 阴影 ====================
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-base:
+  0 1px 3px rgba(0, 0, 0, 0.1),
+  0 1px 2px rgba(0, 0, 0, 0.06);
+$shadow-md:
+  0 4px 6px -1px rgba(0, 0, 0, 0.1),
+  0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg:
+  0 10px 15px -3px rgba(0, 0, 0, 0.1),
+  0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$shadow-xl:
+  0 20px 25px -5px rgba(0, 0, 0, 0.1),
+  0 10px 10px -5px rgba(0, 0, 0, 0.04);
+$shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+// ==================== 字体 ====================
+$font-family-base:
+  -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+  sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+$font-family-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+
+$font-size-xs: 12px;
+$font-size-sm: 13px;
+$font-size-base: 14px;
+$font-size-md: 15px;
+$font-size-lg: 16px;
+$font-size-xl: 18px;
+$font-size-2xl: 20px;
+$font-size-3xl: 24px;
+$font-size-4xl: 28px;
+$font-size-5xl: 32px;
+
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+$line-height-tight: 1.25;
+$line-height-base: 1.5;
+$line-height-relaxed: 1.75;
+
+// ==================== 过渡动画 ====================
+$transition-fast: 0.15s ease;
+$transition-base: 0.2s ease;
+$transition-slow: 0.3s ease;
+$transition-slower: 0.5s ease;
+
+// ==================== 层级 (z-index) ====================
+$z-index-dropdown: 1000;
+$z-index-sticky: 1020;
+$z-index-fixed: 1030;
+$z-index-modal-backdrop: 1040;
+$z-index-modal: 1050;
+$z-index-popover: 1060;
+$z-index-tooltip: 1070;
+$z-index-toast: 1080;
+
+// ==================== 布局尺寸 ====================
+$layout-sider-width: 200px;
+$layout-sider-collapsed-width: 48px;
+$layout-header-height: 56px;
+$layout-footer-height: 48px;
+
+// ==================== 断点 (响应式) ====================
+$breakpoint-xs: 480px;
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+$breakpoint-2xl: 1400px;

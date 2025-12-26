@@ -1,0 +1,233 @@
+// ==================== Arco Design Vue 主题覆盖 ====================
+// 覆盖 Arco Design 的 CSS 变量和组件样式
+// 官方文档: https://arco.design/vue/docs/theme
+
+@use './variables' as *;
+
+// ==================== Arco CSS 变量覆盖 ====================
+// Arco 使用 CSS 变量，可以直接在 :root 中覆盖
+
+:root {
+  // 主色
+  --primary-1: #{rgba($color-primary, 0.1)};
+  --primary-2: #{rgba($color-primary, 0.2)};
+  --primary-3: #{rgba($color-primary, 0.4)};
+  --primary-4: #{rgba($color-primary, 0.6)};
+  --primary-5: #{$color-primary-light};
+  --primary-6: #{$color-primary};
+  --primary-7: #{$color-primary-dark};
+
+  // 成功色
+  --success-1: #{rgba($color-success, 0.1)};
+  --success-6: #{$color-success};
+
+  // 警告色
+  --warning-1: #{rgba($color-warning, 0.1)};
+  --warning-6: #{$color-warning};
+
+  // 危险色
+  --danger-1: #{rgba($color-danger, 0.1)};
+  --danger-6: #{$color-danger};
+
+  // 圆角
+  --border-radius-small: #{$radius-sm};
+  --border-radius-medium: #{$radius-base};
+  --border-radius-large: #{$radius-md};
+
+  // 字体
+  --font-size-body-1: #{$font-size-xs};
+  --font-size-body-2: #{$font-size-sm};
+  --font-size-body-3: #{$font-size-base};
+}
+
+// ==================== 组件样式覆盖 ====================
+
+// 按钮
+.arco-btn {
+  border-radius: $radius-base;
+  font-weight: $font-weight-medium;
+  transition: all $transition-base;
+
+  // 主按钮渐变效果
+  &.arco-btn-primary {
+    background: $gradient-primary;
+    border: none;
+
+    &:not(.arco-btn-disabled):hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+      box-shadow: $shadow-md;
+    }
+
+    &:not(.arco-btn-disabled):active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// 输入框
+.arco-input-wrapper,
+.arco-textarea-wrapper {
+  border-radius: $radius-base;
+  transition: all $transition-base;
+
+  &:hover:not(.arco-input-disabled) {
+    border-color: $color-primary-light;
+  }
+
+  &.arco-input-focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px $color-primary-bg;
+  }
+}
+
+// 选择器
+.arco-select-view {
+  border-radius: $radius-base;
+}
+
+// 下拉菜单
+.arco-dropdown-list {
+  border-radius: $radius-base;
+  box-shadow: $shadow-lg;
+}
+
+// 卡片
+.arco-card {
+  border-radius: $radius-md;
+  box-shadow: $shadow-base;
+  border: none;
+}
+
+// 表格
+.arco-table {
+  .arco-table-th {
+    background: $color-bg-hover;
+    font-weight: $font-weight-semibold;
+  }
+
+  .arco-table-tr:hover .arco-table-td {
+    background: $color-bg-hover;
+  }
+}
+
+// 模态框
+.arco-modal {
+  border-radius: $radius-lg;
+  overflow: hidden;
+
+  .arco-modal-header {
+    border-bottom: 1px solid $color-border-light;
+  }
+
+  .arco-modal-footer {
+    border-top: 1px solid $color-border-light;
+  }
+}
+
+// 抽屉
+.arco-drawer {
+  .arco-drawer-header {
+    border-bottom: 1px solid $color-border-light;
+  }
+
+  .arco-drawer-footer {
+    border-top: 1px solid $color-border-light;
+  }
+}
+
+// 消息提示
+.arco-message {
+  border-radius: $radius-base;
+  box-shadow: $shadow-lg;
+}
+
+// 通知
+.arco-notification {
+  border-radius: $radius-md;
+  box-shadow: $shadow-xl;
+}
+
+// 标签页
+.arco-tabs-nav-tab {
+  transition: all $transition-base;
+
+  &:hover {
+    color: $color-primary;
+  }
+
+  &.arco-tabs-nav-tab-active {
+    font-weight: $font-weight-medium;
+  }
+}
+
+// 菜单
+.arco-menu {
+  .arco-menu-item {
+    border-radius: $radius-base;
+    margin: 2px 4px;
+    transition: all $transition-base;
+
+    &:hover {
+      background: $color-bg-hover;
+    }
+
+    &.arco-menu-selected {
+      background: $color-primary-bg;
+      color: $color-primary;
+      font-weight: $font-weight-medium;
+    }
+  }
+}
+
+// 分页
+.arco-pagination-item {
+  border-radius: $radius-sm;
+
+  &.arco-pagination-item-active {
+    background: $gradient-primary;
+  }
+}
+
+// 进度条
+.arco-progress-line-bar {
+  background: $gradient-primary;
+}
+
+// 开关
+.arco-switch-checked {
+  background: $gradient-primary;
+}
+
+// 标签
+.arco-tag {
+  border-radius: $radius-sm;
+}
+
+// 徽章
+.arco-badge-number,
+.arco-badge-dot {
+  background: $color-danger;
+}
+
+// 布局侧边栏
+.arco-layout-sider {
+  transition:
+    width $transition-slow,
+    min-width $transition-slow;
+}
+
+// 头像
+.arco-avatar {
+  background: $gradient-primary;
+}
+
+// 工具提示
+.arco-tooltip-content {
+  border-radius: $radius-sm;
+}
+
+// 弹出确认框
+.arco-popconfirm {
+  border-radius: $radius-base;
+}
