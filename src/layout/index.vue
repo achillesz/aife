@@ -60,10 +60,7 @@
 
           <!-- 菜单区域（占位） -->
           <div class="menu-area">
-            <a-tooltip
-              content="首页"
-              v-bind="tooltipProps"
-            >
+            <a-tooltip content="首页">
               <RouterLink :to="{ name: 'Home' }">
                 <div
                   class="menu-item"
@@ -80,10 +77,7 @@
                 </div>
               </RouterLink>
             </a-tooltip>
-            <a-tooltip
-              content="设置"
-              v-bind="tooltipProps"
-            >
+            <a-tooltip content="设置">
               <RouterLink :to="{ name: 'Setting' }">
                 <div
                   class="menu-item"

@@ -37,5 +37,6 @@ watch(
   .title {
     width: 100px;
   }
+
 }
 </style>

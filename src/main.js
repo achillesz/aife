@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+import IconFont from '@/components/icons/IconFont.vue'
 
 // 全局样式
 // 顺序: SCSS(含 reset) → Tailwind
@@ -11,6 +12,7 @@ import '@/styles/index.scss'
 import '@/styles/tailwind.css'
 
 const app = createApp(App)
+app.component('IconFont', IconFont)
 
 app.use(createPinia())
 app.use(router)
